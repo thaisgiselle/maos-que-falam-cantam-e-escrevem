@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mãos que Falam, Cantam e Escrevem</title>
+</head>
+<body>
+<p id="status" style="font-family:Arial,sans-serif;text-align:center;padding:30px">Carregando o projeto…</p>
+<script>
+(async function () {
+  const status = document.getElementById('status');
+  try {
+    const response = await fetch('index-original.html', { cache: 'no-store' });
+    if (!response.ok) throw new Error('index-original.html não encontrado');
+
+    const source = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(source, 'text/html');
+
+    function setImage(selector, src, alt) {
+      const img = doc.querySelector(selector);
+      if (!img) return false;
+      img.setAttribute('src', src);
+      if (alt) img.setAttribute('alt', alt);
+      return true;
+    }
+
+    // ABERTURA: capa separada da história ilustrada.
+    setImage('#prefacio .intro img', 'capaabertura.png', 'Capa da Abertura — Projeto Duda');
+    setImage('#ilustrada-prefacio .story-illustration', 'prefacio.png', 'História ilustrada do Prefácio');
+
+    // BÔNUS: capa separada da história ilustrada.
+    setImage('#bonus .chapter-image img', 'capabonus.png', 'Capa do Bônus — Literatura Surda Adaptada');
+    setImage('#ilustradabonus .story-illustration', 'bonus(1).png', 'História ilustrada do Bônus');
+
+    // CAPÍTULO 4: a história ilustrada continua usando cap4.png.
+    // Quando a nova capa oficial estiver presente, qualquer um destes nomes
+    // será reconhecido sem precisar alterar novamente a estrutura da página.
+    const cap4CoverCandidates = ['capacap4.png', 'cap4-capa.png', 'capa-cap4.png', 'capitulo4-capa.png'];
+    const cap4Img = doc.querySelector('#cap4 .chapter-image img');
+    if (cap4Img) {
+      cap4Img.setAttribute('alt', 'Capa do Capítulo 4');
+      cap4Img.setAttribute('data-cover-candidates', cap4CoverCandidates.join('|'));
+      const probe = new Image();
+      let i = 0;
+      function tryNextCap4Cover() {
+        if (i >= cap4CoverCandidates.length) return;
+        const candidate = cap4CoverCandidates[i++];
+        probe.onload = function () { cap4Img.setAttribute('src', candidate); };
+        probe.onerror = tryNextCap4Cover;
+        probe.src = candidate;
+      }
+      tryNextCap4Cover();
+    }
+
+    // O HTML original contém os scripts de navegação das histórias.
+    // Eles NÃO são removidos: ao reescrever o documento, continuam funcionando.
+    document.open();
+    document.write('<!doctype html>' + doc.documentElement.outerHTML);
+    document.close();
+  } catch (error) {
+    console.error(error);
+    status.innerHTML = '<strong style="color:#a33">Não foi possível carregar o projeto.</strong><br>Verifique se <b>index-original.html</b> está no mesmo repositório.';
+  }
+})();
+</script>
+</body>
+</html>
