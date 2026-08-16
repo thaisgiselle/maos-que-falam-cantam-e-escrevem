@@ -26,36 +26,28 @@
       return true;
     }
 
-    // ABERTURA: capa separada da história ilustrada.
+    // ABERTURA: capa e história ilustrada são arquivos diferentes.
     setImage('#prefacio .intro img', 'capaabertura.png', 'Capa da Abertura — Projeto Duda');
-    setImage('#ilustrada-prefacio .story-illustration', 'prefacio.png', 'História ilustrada do Prefácio');
+    setImage('#ilustrada-prefacio .story-illustration', 'abertura.png', 'História ilustrada da Abertura');
 
-    // BÔNUS: capa separada da história ilustrada.
+    // NOVAS CAPAS — Capítulos 1 a 5.
+    setImage('#cap1 .chapter-image img', 'capa-capitulo-1.png', 'Capa do Capítulo 1');
+    setImage('#cap2 .chapter-image img', 'capa-capitulo-2.png', 'Capa do Capítulo 2');
+    setImage('#cap3 .chapter-image img', 'capa-capitulo-3.png', 'Capa do Capítulo 3');
+    setImage('#cap4 .chapter-image img', 'capa-capitulo-4.png', 'Capa do Capítulo 4');
+    setImage('#cap5 .chapter-image img', 'capa-capitulo-5.png', 'Capa do Capítulo 5');
+
+    // HISTÓRIAS ILUSTRADAS — permanecem separadas das novas capas.
+    setImage('#ilustrada1 .story-illustration', 'cap1 02.png', 'História ilustrada do Capítulo 1');
+    setImage('#ilustrada2 .story-illustration', 'cap2(1).png', 'História ilustrada do Capítulo 2');
+    setImage('#ilustrada3 .story-illustration', 'cap3 02.png', 'História ilustrada do Capítulo 3');
+    setImage('#ilustrada4 .story-illustration', 'cap4.png', 'História ilustrada do Capítulo 4');
+    setImage('#ilustrada5 .story-illustration', 'cap5.png', 'História ilustrada do Capítulo 5');
+
+    // BÔNUS — NÃO ALTERAR.
     setImage('#bonus .chapter-image img', 'capabonus.png', 'Capa do Bônus — Literatura Surda Adaptada');
     setImage('#ilustradabonus .story-illustration', 'bonus(1).png', 'História ilustrada do Bônus');
 
-    // CAPÍTULO 4: a história ilustrada continua usando cap4.png.
-    // Quando a nova capa oficial estiver presente, qualquer um destes nomes
-    // será reconhecido sem precisar alterar novamente a estrutura da página.
-    const cap4CoverCandidates = ['capacap4.png', 'cap4-capa.png', 'capa-cap4.png', 'capitulo4-capa.png'];
-    const cap4Img = doc.querySelector('#cap4 .chapter-image img');
-    if (cap4Img) {
-      cap4Img.setAttribute('alt', 'Capa do Capítulo 4');
-      cap4Img.setAttribute('data-cover-candidates', cap4CoverCandidates.join('|'));
-      const probe = new Image();
-      let i = 0;
-      function tryNextCap4Cover() {
-        if (i >= cap4CoverCandidates.length) return;
-        const candidate = cap4CoverCandidates[i++];
-        probe.onload = function () { cap4Img.setAttribute('src', candidate); };
-        probe.onerror = tryNextCap4Cover;
-        probe.src = candidate;
-      }
-      tryNextCap4Cover();
-    }
-
-    // O HTML original contém os scripts de navegação das histórias.
-    // Eles NÃO são removidos: ao reescrever o documento, continuam funcionando.
     document.open();
     document.write('<!doctype html>' + doc.documentElement.outerHTML);
     document.close();
