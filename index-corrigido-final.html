@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mãos que Falam, Cantam e Escrevem</title>
+</head>
+<body>
+<script>
+fetch('index-final-.html', { cache: 'no-store' })
+  .then(function (response) {
+    if (!response.ok) throw new Error('Não foi possível carregar o conteúdo principal.');
+    return response.text();
+  })
+  .then(function (html) {
+    html = html.replace(
+      'src="abertura.png" alt="Professora Thaís e Duda — História ilustrada da Abertura"',
+      'src="abertura-1.jpg" alt="Professora Thaís e Duda — História ilustrada da Abertura"'
+    );
+
+    html = html.replace(
+      '<div class="chapter-image">\n  <img src="bonus(1).png" alt="Os Três Porquinhos — história inclusiva">',
+      '<div class="chapter-image">\n  <img src="bônus.png" alt="Capa do Bônus — Os Três Porquinhos, história inclusiva">'
+    );
+
+    html = html.replace(
+      '<a href="#cap4" class="story-back">← Voltar ao Capítulo 4</a>\n</section>\n\n\n<section id="ilustradabonus"',
+      '<a href="#bonus" class="story-back">← Voltar ao Bônus</a>\n</section>\n\n\n<section id="ilustradabonus"'
+    );
+
+    html = html.replace(
+      '<a href="#cap4" class="story-back">← Voltar ao Capítulo 4</a>\n</section>\n\n<!-- CAPÍTULO 5 -->',
+      '<a href="#bonus" class="story-back">← Voltar ao Bônus</a>\n</section>\n\n<!-- CAPÍTULO 5 -->'
+    );
+
+    document.open();
+    document.write(html);
+    document.close();
+  })
+  .catch(function (error) {
+    document.body.innerHTML =
+      '<p style="font-family:Arial,sans-serif;padding:30px">Não foi possível carregar o projeto. Atualize a página e tente novamente.</p>';
+    console.error(error);
+  });
+</script>
+</body>
+</html>
