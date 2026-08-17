@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mãos que Falam, Cantam e Escrevem</title>
+</head>
+<body>
+<p id="status" style="font-family:Arial,sans-serif;text-align:center;padding:30px">Carregando o projeto…</p>
+<script>
+(async function () {
+  const status = document.getElementById('status');
+  try {
+    const response = await fetch('index-original.html', { cache: 'no-store' });
+    if (!response.ok) throw new Error('index-original.html não encontrado');
+
+    const source = await response.text();
+    const doc = new DOMParser().parseFromString(source, 'text/html');
+
+    function setImage(selector, src, alt) {
+      const img = doc.querySelector(selector);
+      if (!img) return false;
+      img.src = src;
+      if (alt) img.alt = alt;
+      return true;
+    }
+
+    // Abertura: capa e história ilustrada são imagens diferentes.
+    setImage('#prefacio .intro img', 'prefacio.png', 'Capa da Abertura — Professora Thaís e Duda');
+    setImage('#prefacio > img', 'prefacio.png', 'Capa da Abertura — Professora Thaís e Duda');
+
+    const aberturaIlustrada =
+      doc.querySelector('#ilustrada-prefacio') ||
+      doc.querySelector('[id*="ilustrada"][id*="prefacio"]') ||
+      Array.from(doc.querySelectorAll('.story-page')).find(el =>
+        /ilustrad|história ilustrada/i.test(el.textContent || '') &&
+        /abertura|prefácio/i.test((el.textContent || '') + ' ' + (el.id || ''))
+      );
+
+    if (aberturaIlustrada) {
+      const img = aberturaIlustrada.querySelector('img');
+      if (img) {
+        img.src = 'abertura.png';
+        img.alt = 'História ilustrada da Abertura';
+      }
+    }
+
+    // Novas capas dos capítulos 1 a 5.
+    const capas = {
+      cap1: ['capa-capitulo-1.png', 'Capa do Capítulo 1'],
+      cap2: ['capa-capitulo-2.png', 'Capa do Capítulo 2'],
+      cap3: ['capa-capitulo-3.png', 'Capa do Capítulo 3'],
+      cap4: ['capa-capitulo-4.png', 'Capa do Capítulo 4'],
+      cap5: ['capa-capitulo-5.png', 'Capa do Capítulo 5']
+    };
+
+    Object.entries(capas).forEach(([id, data]) => {
+      const section = doc.getElementById(id);
+      if (!section) return;
+      const img = section.querySelector('.chapter-image img, img');
+      if (!img) return;
+      img.src = data[0];
+      img.alt = data[1];
+    });
+
+    // Histórias ilustradas continuam separadas das capas.
+    const ilustradas = {
+      ilustrada1: ['cap1 02.png', 'História ilustrada do Capítulo 1'],
+      ilustrada2: ['cap2(1).png', 'História ilustrada do Capítulo 2'],
+      ilustrada3: ['cap3 02.png', 'História ilustrada do Capítulo 3'],
+      ilustrada4: ['cap4.png', 'História ilustrada do Capítulo 4'],
+      ilustrada5: ['cap5.png', 'História ilustrada do Capítulo 5']
+    };
+
+    Object.entries(ilustradas).forEach(([id, data]) => {
+      const page = doc.getElementById(id);
+      if (!page) return;
+      const img = page.querySelector('.story-illustration, img');
+      if (!img) return;
+      img.src = data[0];
+      img.alt = data[1];
+    });
+
+    // Bônus: nenhuma imagem ou referência do Bônus é alterada.
+
+    document.open();
+    document.write('<!doctype html>' + doc.documentElement.outerHTML);
+    document.close();
+  } catch (error) {
+    console.error(error);
+    status.innerHTML = '<strong style="color:#a33">Não foi possível carregar o projeto.</strong><br>Verifique se <b>index-original.html</b> está no mesmo repositório.';
+  }
+})();
+</script>
+</body>
+</html>
