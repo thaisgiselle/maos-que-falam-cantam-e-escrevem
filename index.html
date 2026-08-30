@@ -69,6 +69,28 @@ fetch('index-final-.html', { cache: 'no-store' })
     if (bonusAudios[0]) bonusAudios[0].setAttribute('src', 'bonus-1.mpeg');
     if (bonusAudios[1]) bonusAudios[1].setAttribute('src', 'bonus-2.mpeg');
 
+    // Âncoras permanentes para os QR Codes das músicas.
+    // Elas identificam somente os blocos de áudio e não alteram conteúdo ou aparência.
+    var musicAnchors = [
+      ['ABERTURA.mpeg', 'musica-abertura'],
+      ['CAPÍTULO%201.mpeg', 'musica-capitulo-1'],
+      ['CAPÍTULO%202.mpeg', 'musica-capitulo-2'],
+      ['CAPÍTULO%203.mpeg', 'musica-capitulo-3'],
+      ['CAPÍTULO%204.mpeg', 'musica-capitulo-4'],
+      ['bonus-1.mpeg', 'musica-bonus-1'],
+      ['bonus-2.mpeg', 'musica-bonus-2'],
+      ['CAPÍTULO%205.mpeg', 'musica-capitulo-5']
+    ];
+    musicAnchors.forEach(function (item) {
+      var source = Array.from(doc.querySelectorAll('audio source')).find(function (node) {
+        return node.getAttribute('src') === item[0];
+      });
+      if (source) {
+        var music = source.closest('.music');
+        if (music) music.setAttribute('id', item[1]);
+      }
+    });
+
     document.open();
     document.write('<!doctype html>' + doc.documentElement.outerHTML);
     document.close();
