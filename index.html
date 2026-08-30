@@ -16,44 +16,45 @@ fetch('index-final-.html', { cache: 'no-store' })
     var parser = new DOMParser();
     var doc = parser.parseFromString(html, 'text/html');
 
-    /* ABERTURA: história ilustrada correta, separada da capa. */
     var aberturaIlustrada = doc.querySelector('#ilustrada-prefacio .story-illustration');
     if (aberturaIlustrada) {
       aberturaIlustrada.setAttribute('src', 'historia-abertura.png');
       aberturaIlustrada.setAttribute('alt', 'Professora Thaís e Duda — História ilustrada da Abertura');
     }
 
-    /* BÔNUS: capa e história ilustrada ficam separadas. */
+    var historias = {
+      '#ilustrada1 .story-illustration': 'historia-capitulo-1.png',
+      '#ilustrada2 .story-illustration': 'historia-capitulo-2.png',
+      '#ilustrada3 .story-illustration': 'historia-capitulo-3.png',
+      '#ilustrada4 .story-illustration': 'historia-capitulo-4.png',
+      '#ilustrada5 .story-illustration': 'historia-capitulo-5.png'
+    };
+    Object.keys(historias).forEach(function (selector) {
+      var img = doc.querySelector(selector);
+      if (img) img.setAttribute('src', historias[selector]);
+    });
+
     var bonusCapa = doc.querySelector('#bonus .chapter-image img');
     if (bonusCapa) {
-      bonusCapa.setAttribute('src', 'capabonus.png');
+      bonusCapa.setAttribute('src', 'capa-bonus.png');
       bonusCapa.setAttribute('alt', 'Capa do Bônus — Os Três Porquinhos');
     }
 
     var bonusIlustrada = doc.querySelector('#ilustradabonus .story-illustration');
-    if (bonusIlustrada) {
-      bonusIlustrada.setAttribute('src', 'bonus(1).png');
-    }
+    if (bonusIlustrada) bonusIlustrada.setAttribute('src', 'historia-bonus.png');
 
-    /* LER A HISTÓRIA COMPLETA = SOMENTE TEXTO. */
     doc.querySelectorAll('section.story-page[id^="historia"]').forEach(function (section) {
-      section.querySelectorAll('img.story-illustration').forEach(function (img) {
-        img.remove();
-      });
+      section.querySelectorAll('img.story-illustration').forEach(function (img) { img.remove(); });
     });
 
-    /* VER A HISTÓRIA ILUSTRADA = SOMENTE A ILUSTRAÇÃO + BOTÃO DE VOLTAR. */
     doc.querySelectorAll('section.story-page[id^="ilustrada"]').forEach(function (section) {
       Array.from(section.children).forEach(function (child) {
         var manterImagem = child.matches && child.matches('img.story-illustration');
         var manterVoltar = child.matches && child.matches('a.story-back');
-        if (!manterImagem && !manterVoltar) {
-          child.remove();
-        }
+        if (!manterImagem && !manterVoltar) child.remove();
       });
     });
 
-    /* NAVEGAÇÃO DO BÔNUS VOLTA SEMPRE AO BÔNUS, NÃO AO CAPÍTULO 4. */
     ['historiabonus', 'ilustradabonus'].forEach(function (id) {
       var section = doc.getElementById(id);
       if (!section) return;
@@ -64,7 +65,6 @@ fetch('index-final-.html', { cache: 'no-store' })
       }
     });
 
-    /* ÁUDIOS DO BÔNUS: nomes oficiais restaurados no repositório. */
     var bonusAudios = doc.querySelectorAll('#bonus audio source');
     if (bonusAudios[0]) bonusAudios[0].setAttribute('src', 'bonus-1.mpeg');
     if (bonusAudios[1]) bonusAudios[1].setAttribute('src', 'bonus-2.mpeg');
@@ -74,8 +74,7 @@ fetch('index-final-.html', { cache: 'no-store' })
     document.close();
   })
   .catch(function (error) {
-    document.body.innerHTML =
-      '<p style="font-family:Arial,sans-serif;padding:30px">Não foi possível carregar o projeto. Atualize a página e tente novamente.</p>';
+    document.body.innerHTML = '<p style="font-family:Arial,sans-serif;padding:30px">Não foi possível carregar o projeto. Atualize a página e tente novamente.</p>';
     console.error(error);
   });
 </script>
