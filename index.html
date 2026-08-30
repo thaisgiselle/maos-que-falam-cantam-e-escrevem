@@ -69,8 +69,6 @@ fetch('index-final-.html', { cache: 'no-store' })
     if (bonusAudios[0]) bonusAudios[0].setAttribute('src', 'bonus-1.mpeg');
     if (bonusAudios[1]) bonusAudios[1].setAttribute('src', 'bonus-2.mpeg');
 
-    // Âncoras permanentes dos QR Codes, vinculadas diretamente à seção correta.
-    // Assim não dependem do nome/codificação do arquivo de áudio.
     var destinos = [
       ['#prefacio', 0, 'musica-abertura'],
       ['#cap1', 0, 'musica-capitulo-1'],
@@ -78,7 +76,6 @@ fetch('index-final-.html', { cache: 'no-store' })
       ['#cap3', 0, 'musica-capitulo-3'],
       ['#cap4', 0, 'musica-capitulo-4'],
       ['#bonus', 0, 'musica-bonus-1'],
-      ['#bonus', 1, 'musica-bonus-2'],
       ['#cap5', 0, 'musica-capitulo-5']
     ];
     destinos.forEach(function (item) {
@@ -91,9 +88,22 @@ fetch('index-final-.html', { cache: 'no-store' })
       }
     });
 
-    // Após o conteúdo dinâmico ser montado, centraliza o QR exatamente no player.
+    // Bônus 2: destino exclusivo pelo próprio arquivo de áudio.
+    // Não depende da posição do player dentro do capítulo Bônus.
+    var bonus2Source = Array.from(doc.querySelectorAll('#bonus audio source')).find(function (node) {
+      var src = node.getAttribute('src') || '';
+      return src.indexOf('bonus-2.mpeg') !== -1;
+    });
+    if (bonus2Source) {
+      var bonus2Player = bonus2Source.closest('.music');
+      if (bonus2Player) {
+        bonus2Player.setAttribute('id', 'musica-bonus-2');
+        bonus2Player.style.scrollMarginTop = '110px';
+      }
+    }
+
     var hashScript = doc.createElement('script');
-    hashScript.textContent = "(function(){function ir(){var id=decodeURIComponent(location.hash.slice(1));if(!id)return;var el=document.getElementById(id);if(el){setTimeout(function(){el.scrollIntoView({behavior:'auto',block:'center'});},120);}}window.addEventListener('load',ir);setTimeout(ir,250);})();";
+    hashScript.textContent = "(function(){function ir(){var id=decodeURIComponent(location.hash.slice(1));if(!id)return;var el=document.getElementById(id);if(el){setTimeout(function(){el.scrollIntoView({behavior:'auto',block:'center'});},120);}}window.addEventListener('load',ir);setTimeout(ir,250);setTimeout(ir,700);})();";
     doc.body.appendChild(hashScript);
 
     document.open();
