@@ -69,27 +69,32 @@ fetch('index-final-.html', { cache: 'no-store' })
     if (bonusAudios[0]) bonusAudios[0].setAttribute('src', 'bonus-1.mpeg');
     if (bonusAudios[1]) bonusAudios[1].setAttribute('src', 'bonus-2.mpeg');
 
-    // Âncoras permanentes para os QR Codes das músicas.
-    // Elas identificam somente os blocos de áudio e não alteram conteúdo ou aparência.
-    var musicAnchors = [
-      ['ABERTURA.mpeg', 'musica-abertura'],
-      ['CAPÍTULO%201.mpeg', 'musica-capitulo-1'],
-      ['CAPÍTULO%202.mpeg', 'musica-capitulo-2'],
-      ['CAPÍTULO%203.mpeg', 'musica-capitulo-3'],
-      ['CAPÍTULO%204.mpeg', 'musica-capitulo-4'],
-      ['bonus-1.mpeg', 'musica-bonus-1'],
-      ['bonus-2.mpeg', 'musica-bonus-2'],
-      ['CAPÍTULO%205.mpeg', 'musica-capitulo-5']
+    // Âncoras permanentes dos QR Codes, vinculadas diretamente à seção correta.
+    // Assim não dependem do nome/codificação do arquivo de áudio.
+    var destinos = [
+      ['#prefacio', 0, 'musica-abertura'],
+      ['#cap1', 0, 'musica-capitulo-1'],
+      ['#cap2', 0, 'musica-capitulo-2'],
+      ['#cap3', 0, 'musica-capitulo-3'],
+      ['#cap4', 0, 'musica-capitulo-4'],
+      ['#bonus', 0, 'musica-bonus-1'],
+      ['#bonus', 1, 'musica-bonus-2'],
+      ['#cap5', 0, 'musica-capitulo-5']
     ];
-    musicAnchors.forEach(function (item) {
-      var source = Array.from(doc.querySelectorAll('audio source')).find(function (node) {
-        return node.getAttribute('src') === item[0];
-      });
-      if (source) {
-        var music = source.closest('.music');
-        if (music) music.setAttribute('id', item[1]);
+    destinos.forEach(function (item) {
+      var section = doc.querySelector(item[0]);
+      if (!section) return;
+      var musicas = section.querySelectorAll('.music');
+      if (musicas[item[1]]) {
+        musicas[item[1]].setAttribute('id', item[2]);
+        musicas[item[1]].style.scrollMarginTop = '110px';
       }
     });
+
+    // Após o conteúdo dinâmico ser montado, centraliza o QR exatamente no player.
+    var hashScript = doc.createElement('script');
+    hashScript.textContent = "(function(){function ir(){var id=decodeURIComponent(location.hash.slice(1));if(!id)return;var el=document.getElementById(id);if(el){setTimeout(function(){el.scrollIntoView({behavior:'auto',block:'center'});},120);}}window.addEventListener('load',ir);setTimeout(ir,250);})();";
+    doc.body.appendChild(hashScript);
 
     document.open();
     document.write('<!doctype html>' + doc.documentElement.outerHTML);
