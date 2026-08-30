@@ -16,13 +16,14 @@ fetch('index-final-.html', { cache: 'no-store' })
     var parser = new DOMParser();
     var doc = parser.parseFromString(html, 'text/html');
 
-    /* CORREÇÃO DA ABERTURA: usa somente a imagem válida da história ilustrada. */
+    /* ABERTURA: história ilustrada correta, separada da capa. */
     var aberturaIlustrada = doc.querySelector('#ilustrada-prefacio .story-illustration');
     if (aberturaIlustrada) {
-      aberturaIlustrada.setAttribute('src', 'abertura.png');
+      aberturaIlustrada.setAttribute('src', 'historia-abertura.png');
+      aberturaIlustrada.setAttribute('alt', 'Professora Thaís e Duda — História ilustrada da Abertura');
     }
 
-    /* CORREÇÃO DO BÔNUS: capa e história ilustrada ficam separadas. */
+    /* BÔNUS: capa e história ilustrada ficam separadas. */
     var bonusCapa = doc.querySelector('#bonus .chapter-image img');
     if (bonusCapa) {
       bonusCapa.setAttribute('src', 'capabonus.png');
