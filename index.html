@@ -75,7 +75,6 @@ fetch('index-final-.html', { cache: 'no-store' })
       ['#cap2', 0, 'musica-capitulo-2'],
       ['#cap3', 0, 'musica-capitulo-3'],
       ['#cap4', 0, 'musica-capitulo-4'],
-      ['#bonus', 0, 'musica-bonus-1'],
       ['#cap5', 0, 'musica-capitulo-5']
     ];
     destinos.forEach(function (item) {
@@ -88,22 +87,28 @@ fetch('index-final-.html', { cache: 'no-store' })
       }
     });
 
-    // Bônus 2: destino exclusivo pelo próprio arquivo de áudio.
-    // Não depende da posição do player dentro do capítulo Bônus.
-    var bonus2Source = Array.from(doc.querySelectorAll('#bonus audio source')).find(function (node) {
-      var src = node.getAttribute('src') || '';
-      return src.indexOf('bonus-2.mpeg') !== -1;
+    // Os dois áudios do Bônus ficam no mesmo bloco .music.
+    // Por isso cada música recebe uma âncora própria imediatamente antes do seu player.
+    var bonusSources = Array.from(doc.querySelectorAll('#bonus audio source'));
+    [
+      ['bonus-1.mpeg', 'musica-bonus-1'],
+      ['bonus-2.mpeg', 'musica-bonus-2']
+    ].forEach(function (cfg) {
+      var source = bonusSources.find(function (node) {
+        return (node.getAttribute('src') || '').indexOf(cfg[0]) !== -1;
+      });
+      if (!source) return;
+      var audio = source.closest('audio');
+      if (!audio) return;
+      var anchor = doc.createElement('span');
+      anchor.setAttribute('id', cfg[1]);
+      anchor.style.display = 'block';
+      anchor.style.scrollMarginTop = '110px';
+      audio.parentNode.insertBefore(anchor, audio);
     });
-    if (bonus2Source) {
-      var bonus2Player = bonus2Source.closest('.music');
-      if (bonus2Player) {
-        bonus2Player.setAttribute('id', 'musica-bonus-2');
-        bonus2Player.style.scrollMarginTop = '110px';
-      }
-    }
 
     var hashScript = doc.createElement('script');
-    hashScript.textContent = "(function(){function ir(){var id=decodeURIComponent(location.hash.slice(1));if(!id)return;var el=document.getElementById(id);if(el){setTimeout(function(){el.scrollIntoView({behavior:'auto',block:'center'});},120);}}window.addEventListener('load',ir);setTimeout(ir,250);setTimeout(ir,700);})();";
+    hashScript.textContent = "(function(){function ir(){var id=decodeURIComponent(location.hash.slice(1));if(!id)return;var el=document.getElementById(id);if(el){setTimeout(function(){el.scrollIntoView({behavior:'auto',block:'center'});},120);}}window.addEventListener('load',ir);setTimeout(ir,250);setTimeout(ir,700);setTimeout(ir,1400);})();";
     doc.body.appendChild(hashScript);
 
     document.open();
